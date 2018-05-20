@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="bgimg">
+    <div class="coverimg d-flex align-items-center">
+      <div class="col-3"></div>
+      <div class="col-6" id="titleText">
+        <h1 class="text-white text-center" id="title">Mongo Scraper</h1>
+        <h3 class="text-white text-center" id="subtitle">Washington Post Edition</h3>
+      </div>
+      <div class="col-3"></div>    
+    </div>
+  </div>
+</div>
+<!--Begin main content-->        
+<div class="row mainContent w-100">
+  <div class = "col-md-12 p-0">
+    <div class="row container-fluid d-flex justify-content-center">
+      <div class="col-md-1"></div>
+      <div class="col-md-10 text-white"></div>
+      <div class="col-md-1"></div>
+    </div>
+  </div>
+</div>
+
+<div class="cardContainer bg-white">
+  {{#each articles}} {{> article-block}} {{/each}}
+</div>
+                                
+<!-- Custom scripts for Mongo Scraper -->
+<script src="./assets/js/app.js"></script>

@@ -1,0 +1,72 @@
+html {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	height: 100%;
+	margin: 0;
+	font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+	color: #5543ff;
+	margin: 0;
+}
+
+#myNavbar {
+	background-color:  #2196F3;
+}
+
+#brand, #saved {
+  color: #b2dbfb;
+}
+
+#brand:hover, #saved:hover {
+  color: white;
+}
+
+#home {
+  background-color: #0C7CD5;
+}
+
+#scrape:hover {
+  background-color: #0AAF53;
+  border: none;
+}
+
+.bgimg {
+	position: absolute; 
+	top: 10%;
+	left: 0;
+	background-image: url("../img/newspaper.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+}
+
+.coverimg {
+	position: absolute; 
+	top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+	background-color: rgba(25, 25, 25, 0.7);
+	width: 100%;
+	height: 100%;
+}
+
+.mainContent {
+	position: absolute;
+	top: 100%;
+}
+
+#titleText {
+  font-family: "Times New Roman", Times, serif;
+}
+
+#title {
+  font-size: 5rem;
+}
+
+#subtitle {
+  font-size: 1.8rem;
+}
