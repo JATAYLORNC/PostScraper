@@ -27,9 +27,12 @@ body {
   background-color: #0C7CD5;
 }
 
+#scrape, #scrape:hover, #scrape:active, #scrape:visited {
+	border: none;
+}
+
 #scrape:hover {
   background-color: #0AAF53;
-  border: none;
 }
 
 .bgimg {
