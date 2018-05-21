@@ -24,12 +24,19 @@ var db = require("./models");
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/washPostScrape");
 
+//define engine for handlebars
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
 // Routes
 
 app.get("/", function(req, res) {
+
+  console.log ("/ route hit");
   //define object to render to view handlebars
-  var hdbs = {
-    title: "Uh Oh!  Looks like we don't have any new articles!"
+  var hdbsObject = {
+    title: "Uh Oh!  Looks like we don't have any new articles!",
+    link: " "
   };
 
   //render the object to index.handlebars
@@ -39,13 +46,15 @@ app.get("/", function(req, res) {
 
 // A GET route for scraping the Washington Post website
 app.get("/scrape", function(req, res) {
+
+  console.log("/scrape route hit")
   // First, we grab the body of the html with request
   request("http://www.washingtonpost.com", function(error, response, html) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
 
     var hdbsObject = {};
-    var results = []
+    var results = {};
 
     // Select each element in the HTML body from which you want information.
     // NOTE: Cheerio selectors function similarly to jQuery's selectors,
@@ -57,10 +66,10 @@ app.get("/scrape", function(req, res) {
 
       if(link && title) {
          // Save these results in an object that we'll push into the results array we defined earlier
-        results.push({
+        results[i] = {
           title: title,
           link: link
-        });
+        };
       }
     });
     var hdbsObject = 
