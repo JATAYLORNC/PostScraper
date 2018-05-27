@@ -2,7 +2,8 @@
   <div class="card-body">
     <div class="card-title bg-primary w-100 cardHeader d-flex align-items-center pl-4 pr-4">
       <h5><a href="{{link}}" class="text-white cardTitle">{{title}}</a></h5>
-      <a href="#" class="btn btn-primary bg-success ml-auto saveArticle float-right" data-link="{{link}}" data-title="{{title}}" data-summary="{{summary}}">Save Article</a>
+      <a href="#" class="btn text-white ml-5 mr-2 articleNote" data-id="{{_id}}">Article Notes</a></h5>
+      <a href="#" class="btn btn-danger deleteSaved" data-id="{{_id}}">Delete From Saved</a></h5>
     </div>
     <div class="card-text">
       <p class="summary">{{summary}}</p>

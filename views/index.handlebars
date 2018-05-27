@@ -1,28 +1,84 @@
-<div class="row">
-  <div class="bgimg">
-    <div class="coverimg d-flex align-items-center">
-      <div class="col-3"></div>
-      <div class="col-6" id="titleText">
-        <h1 class="text-white text-center" id="title">Mongo Scraper</h1>
-        <h3 class="text-white text-center" id="subtitle">Washington Post Edition</h3>
+<!-- Scrape Modal -->
+<div class="modal fade" id="scrapeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header scrapeHeader">
+
+        <span class="col-10"></span>
+        <button type="button" class="close col-2 text-right" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="col-3"></div>    
+
+      <div class="modal-body">
+        <h1 class="text-center">Added {{count}} new articles!</h1>
+      </div>
+
+      <div class="modal-footer scrapeFooter">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
     </div>
   </div>
-</div>
-<!--Begin main content-->        
-<div class="row mainContent w-100">
-  <div class = "col-md-12 p-0">
-    <div class="row container-fluid d-flex justify-content-center">
-      <div class="col-md-1"></div>
-      <div class="col-md-10 text-white"></div>
-      <div class="col-md-1"></div>
+</div>      
+
+<!-- Note Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content text-secondary">
+      <div class="modal-header noteHeader">
+       <h4 class="col-11 text-center" id="noteHeader"></h4>
+        <button type="button" class="close col-1 ml-0 text-right" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4" id="noteDiv"></div>
+        <form>
+          <div class="form-group">
+            <textarea  class="form-control pl-2 pr-2 pt-3" id="articleNote" placeholder = "New Note"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-sm float-right pl-3 pr-3" id="saveNote">Save Note</button>
+      </div>
     </div>
   </div>
+</div>      
+
+
+<nav class="navbar navbar-expand-md navbar-inverse w-100" id="myNavbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" id="brand" href="/"><strong>Mongo Scraper</strong></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="navbar-nav d-flex align-items-center">
+        <a class="nav-item nav-link active text-white" href="/" id="home">Home</a>
+        <a class="nav-item nav-link" href="/savedarticles" id="saved">Saved Articles</a>
+        <a class="nav-item nav-link" href="/scrape"><button type="button" class="btn btn-danger" id="scrape">Scrape New Articles</button></a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class = "text-white text-center w-100 h-100 cover">
+  <div class="coverimg ">
+    <div id="titleText">
+      <h1 id="title">Mongo Scraper</h1>
+      <h3 id="subtitle">Washington Post Edition</h3>
+    </div>
+  </div>
+  <div class="bgimg"></div>
+  
 </div>
 
 <div class="cardContainer bg-white">
+  {{#each messages}} {{> message-block}} {{/each}}
   {{#each articles}} {{> article-block}} {{/each}}
+  {{#each savedArticles}} {{> saved-block}} {{/each}}
 </div>
                                 
 <!-- Custom scripts for Mongo Scraper -->

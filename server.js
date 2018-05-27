@@ -30,13 +30,12 @@ app.set("view engine", "handlebars");
 
 // Routes
 
+//define root route
 app.get("/", function(req, res) {
 
-  console.log ("/ route hit");
   //define object to render to view handlebars
   var hdbsObject = {
-    title: "Uh Oh!  Looks like we don't have any new articles!",
-    link: " "
+    messages: {0: {message: "Uh Oh!  Looks like we don't have any new articles!"}}
   };
 
   //render the object to index.handlebars
@@ -47,97 +46,188 @@ app.get("/", function(req, res) {
 // A GET route for scraping the Washington Post website
 app.get("/scrape", function(req, res) {
 
-  console.log("/scrape route hit")
-  // First, we grab the body of the html with request
+  //grab the body of the Washington Post html with request
   request("http://www.washingtonpost.com", function(error, response, html) {
-    // Then, we load that into cheerio and save it to $ for a shorthand selector
+
+    //load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
 
+    //define variables to hold scrape results
     var hdbsObject = {};
     var results = {};
+    var count = 0;
 
-    // Select each element in the HTML body from which you want information.
-    // NOTE: Cheerio selectors function similarly to jQuery's selectors,
-    // but be sure to visit the package's npm page to see how it works
+    // Select each element in the HTML body which contains the article headline and link.
     $("div.headline").each(function(i, element) {
 
+      //capture the article title and link
       var title = $(element).find('a').text();
       var link = $(element).children().attr("href");
+      var summary = $(element).parent().find('.blurb').text();
 
+      //check if there is and article and link
       if(link && title) {
-         // Save these results in an object that we'll push into the results array we defined earlier
+         // Save these results in an object that will be loaded into the results object defined earlier
         results[i] = {
           title: title,
-          link: link
+          link: link,
+          summary: summary
         };
+
+        //increase the article count
+        count +=1;
       }
     });
+
+    //define handlebars object
     var hdbsObject = 
     {
-      articles: results
-    }
+      articles: results,
+      count: count
 
+    }
+    
     //render the object to index.handlebars
     res.render("index", hdbsObject);
   });
 });
 
-// // Route for getting all Articles from the db
-// app.get("/articles", function(req, res) {
-//   // TODO: Finish the route so it grabs all of the articles
-//   db.Article.find({}).then(function(dbArticles) {
-//     // If all Users are successfully found, send them back to the client
-//     res.json(dbArticles);
-//   })
-//   .catch(function(err) {
-//     // If an error occurs, send the error back to the client
-//     res.json(err);
-//   });
-// });
+//A POST route for saving (i.e. adding) articles to the Article collection in mongoDB
+app.post("/article", function(req, res) {
 
-// // Route for grabbing a specific Article by id, populate it with it's note
-// app.get("/articles/:id", function(req, res) {
-//   // TODO
-//   // ====
-//   // Finish the route so it finds one article using the req.params.id,
-//   // and run the populate method with "note",
-//   // then responds with the article with the note included
-//   db.Article.findOne({"_id": req.params.id})
-//     .populate("note")
-//     .then(function(Article) {
-//       // If all Users are successfully found, send them back to the client
-//       res.json(Article);
-//     })
-//     .catch(function(err) {
-//       // If an error occurs, send the error back to the client
-//       res.json(err);
-//     });
-// });
+  //variable to capture titles previously saved
+  var titles = [];
 
-// // Route for saving/updating an Article's associated Note
-// app.post("/articles/:id", function(req, res) {
-//   // TODO
-//   // ====
-//   // save the new note that gets posted to the Notes collection
-//   // then find an article from the req.params.id
-//   // and update it's "note" property with the _id of the new note
-//   db.Note.create(req.body)
-//     .then(function(dbNote) {
-//       // If a Note was created successfully, find one Article (there's only one) and push the new Note's _id to the articles's `notes` array
-//       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-//       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-//       return db.Article.findOneAndUpdate({"_id": req.params.id}, { $set: { note: dbNote._id } }, { new: true });
-//     })
-//     .then(function(dbUser) {
-//       // If the User was updated successfully, send it back to the client
-//       res.json(dbUser);
-//     })
-//     .catch(function(err) {
-//       // If an error occurs, send it back to the client
-//       res.json(err);
-//   });
+  // route to grab all of the saved articles
+  db.Article.find({}).then(function(dbArticles) {
 
-// });
+    //loop throughs saved articles
+    for(var i=0; i<dbArticles.length; i++) {
+
+      //push previously saved article titles to array
+      titles.push(dbArticles[i].title);
+    }
+
+      //check if title from request to save article is included in 
+      //array of previously saved titles
+      if (titles.includes(req.body.title)) {
+
+        //return response to front end indicating title was previously saved
+        var duplicate = {
+          title: "Article Previously Saved"
+        }
+
+        res.json(duplicate);
+    
+      } else {
+    
+        //create new document in Article collection
+        db.Article.create(req.body).then(function(dbArticle) {
+    
+          //return article object to front end
+          res.json(dbArticle);
+    
+        }).catch(function(err) {
+                // If an error occurs, send the error back to the client
+                res.json(err);
+              });
+      }
+  });
+
+});
+
+// Route for getting all saved Articles from the db
+app.get("/savedarticles", function(req, res) {
+
+  // route to grab all of the saved articles
+  db.Article.find({}).then(function(dbArticles) {
+   
+    //define handlebars object
+    var hdbsObject = {
+      savedArticles: dbArticles
+    }
+
+    //render all saved articles to handlebars
+    res.render("index", hdbsObject);
+  })
+  .catch(function(err) {
+    // If an error occurs, send the error back to the client
+    res.json(err);
+  });
+});
+
+//A DELETE route for removing a specific article document from the Article collection
+app.delete("/deleteArticle", function(req, res) {
+
+  //capture delete article ID object in a variable
+  var id = req.body;
+
+  //route to delete a specific article
+  db.Article.deleteOne(id).then(function(deleteID) {
+
+    //return deleted article ID object to the front end
+    res.json(deleteID);
+  })
+  .catch(function(err) {
+    // If an error occurs, send the error back to the client
+    res.json(err);
+  });
+});
+
+//A DELETE route for removing a specific note document from the Note collection
+app.delete("/deleteNote", function(req, res) {
+
+  //capture the delete note ID object in a variable
+  var id = req.body;
+
+  //route to delete a specific article
+  db.Note.deleteOne(id).then(function(deleteID) {
+    //return deleted note ID object to the front end
+    res.json(deleteID);
+  })
+  .catch(function(err) {
+    // If an error occurs, send the error back to the client
+    res.json(err);
+  });
+});
+
+// Route for saving/updating an Article's associated Note
+app.post("/articles/:id", function(req, res) {
+  // Create a new note and pass the req.body to the entry
+  db.Note.create(req.body)
+    .then(function(dbNote) {
+
+      // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+      // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+      // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+      return db.Article.findOneAndUpdate({ _id: req.params.id }, { $addToSet: { note: dbNote._id }}, { new: true });
+    })
+    .then(function(dbArticle) {
+      // If we were able to successfully update an Article, send it back to the client
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
+// Route for grabbing a specific Article by article id, populate the notes
+app.get("/notes/:id", function(req, res) {
+
+  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+  db.Article.findOne({ _id: req.params.id })
+    // ..and populate all of the notes associated with it
+    .populate("note")
+    .then(function(dbArticle) {
+      // If we were able to successfully find an Article with the given id, send it back to the client
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
 
 // Start the server
 app.listen(PORT, function() {

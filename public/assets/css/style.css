@@ -35,15 +35,16 @@ body {
   background-color: #0AAF53;
 }
 
+.cover {
+	position: relative;
+}
+
 .bgimg {
-	position: absolute; 
-	top: 10%;
-	left: 0;
 	background-image: url("../img/newspaper.jpg");
+	height: 100%;
+	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	width: 100%;
-	height: 100%;
 }
 
 .coverimg {
@@ -55,14 +56,13 @@ body {
 	background-color: rgba(25, 25, 25, 0.7);
 	width: 100%;
 	height: 100%;
-}
-
-.mainContent {
-	position: absolute;
-	top: 100%;
+	z-index: auto;
 }
 
 #titleText {
+	position: absolute;
+	top: 40%;
+	width: 100%;
   font-family: "Times New Roman", Times, serif;
 }
 
@@ -72,4 +72,41 @@ body {
 
 #subtitle {
   font-size: 1.8rem;
+}
+
+.cardHeader {
+	height: 90px;
+}
+
+.cardTitle {
+	font-size: 1.8rem;
+}
+
+.articleNote {
+	background-color: #B01FA6;
+}
+
+.scrapeHeader, .scrapeFooter, .noteFooter, .noteHeader {border: 0px solid rgba(0, 0, 0, 0.2);}
+
+.modal-lg {
+	max-width: 53%;
+}
+
+#saveNote {
+	margin-right: 12%;
+}
+
+#noteDiv {
+	border: 1px solid lightgray;
+}
+
+#noteDiv p {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	margin-left: 2rem;
+	display: block;
+}
+
+.summary {
+	color: black;
 }
