@@ -21,8 +21,10 @@ app.use(express.static("public"));
 // Require all models
 var db = require("./models");
 
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/washPostScrape";
+
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/washPostScrape");
+mongoose.connect(MONGODB_URI);
 
 //define engine for handlebars
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
